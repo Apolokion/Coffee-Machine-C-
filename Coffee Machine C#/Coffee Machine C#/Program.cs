@@ -18,6 +18,8 @@ public class Kaffeemaschine
     
     public double wasserAuffuellen(double menge)
     {
+        if (menge <= 0) return 0;
+
         double freierPlatz = maxWasser - wasser;
         double tatsaechlicheMenge = Math.Min(menge, freierPlatz);
         wasser += tatsaechlicheMenge;
@@ -26,6 +28,8 @@ public class Kaffeemaschine
     
     public double bohnenAuffuellen(double menge)
     {
+        if (menge <= 0) return 0;
+
         double freierPlatz = maxBohnen - bohnen;
         double tatsaechlicheMenge = Math.Min(menge, freierPlatz);
         bohnen += tatsaechlicheMenge;
@@ -34,16 +38,33 @@ public class Kaffeemaschine
     
     public bool macheKaffee(double menge, double verhaeltnisWasserBohnen)
     {
-        // Berechne benötigte Mengen an Wasser und Bohnen
+        // Benötigte Mengen an Wasser und Bohnen
         double wasserMenge = menge * verhaeltnisWasserBohnen / (verhaeltnisWasserBohnen + 1);
         double bohnenMenge = menge / (verhaeltnisWasserBohnen + 1);
         
-        // Prüfe, ob genügend Wasser und Bohnen vorhanden sind
+        // Ob genügend Wasser und Bohnen vorhanden sind
         if (wasser >= wasserMenge && bohnen >= bohnenMenge)
         {
             wasser -= wasserMenge;
             bohnen -= bohnenMenge;
             gesamtMengeKaffeProduziert += menge;
+            return true;
+        }
+        
+        return false;
+    }
+
+     public bool macheCappuccino()
+    {
+        double bohnenMenge = 0.1; 
+        double wasserMenge = 0.2;
+        double gesamtMenge = bohnenMenge + wasserMenge;
+        
+        if (wasser >= wasserMenge && bohnen >= bohnenMenge)
+        {
+            wasser -= wasserMenge;
+            bohnen -= bohnenMenge;
+            gesamtMengeKaffeProduziert += gesamtMenge;
             return true;
         }
         
@@ -77,7 +98,8 @@ class Program
             Console.WriteLine("1 - Wasser auffüllen");
             Console.WriteLine("2 - Bohnen auffüllen");
             Console.WriteLine("3 - Kaffee machen");
-            Console.WriteLine("4 - Beenden");
+            Console.WriteLine("4 - Cappuccino machen (0.1 kg Bohnen + 0.2 kg Wasser)");
+            Console.WriteLine("5 - Beenden");
             Console.Write("Ihre Wahl: ");
             
             string eingabe = Console.ReadLine();
@@ -135,13 +157,26 @@ class Program
                         Console.WriteLine("Nicht genügend Wasser oder Bohnen für die Kaffeezubereitung!");
                     }
                     break;
+
+                   case "4":
+                    bool cappuccinoErfolg = maschine.macheCappuccino();
+                    if (cappuccinoErfolg)
+                    {
+                        Console.WriteLine("Cappuccino erfolgreich produziert! (0.3 kg)");
+                        Console.WriteLine("Verwendet: 0.10 kg Bohnen + 0.20 kg Wasser");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Nicht genügend Wasser oder Bohnen für Cappuccino!");
+                    }
+                    break;   
                     
-                case "4":
+                case "5":
                     Console.WriteLine("Auf Wiedersehen!");
                     return;
                     
                 default:
-                    Console.WriteLine("Ungültige Auswahl! Bitte 1-4 eingeben.");
+                    Console.WriteLine("Ungültige Auswahl! Bitte 1-5 eingeben.");
                     break;
             }
             
